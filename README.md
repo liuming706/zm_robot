@@ -6,9 +6,7 @@ The zm robot is a autonomous mobile robot by 4 mecanum wheel driving under Gazeb
 
 ## Built with
 
-- ROS Melodic Morenia under Ubuntu 18.04 LTS
-
-- ROS Noetic Ninjemys under Ubuntu 20.04 LTS
+- ROS Foxy under Ubuntu 20.04 LTS
 
 ------
 
@@ -18,128 +16,126 @@ The zm robot is a autonomous mobile robot by 4 mecanum wheel driving under Gazeb
 
 - Installation ros package.
 
-    ``` $ sudo apt-get install ros-<distro>-gazebo-ros-pkgs ros-<distro>-gazebo-ros-control ros-<distro>-ros-controllers ros-<distro>-twist-mux```
+    ``` $ sudo apt-get install ros-foxy-gazebo-ros-pkgs ros-foxy-gazebo-ros ros-foxy-gazebo-dev ros-foxy-xacro```
 
     ``` $ sudo apt-get install -y libgazebo11-dev ```
     
     ``` $ sudo apt-get install -y gazebo11 ```
 
-    ``` $ sudo apt-get install -y ros-<distro>-gmapping ros-<distro>-openslam-gmapping ros-<distro>-navigation ```
+    ``` $ sudo apt-get install -y ros-foxy-cartographer-ros ```
   
-    ``` $ sudo apt-get install -y ros-<distro>-amcl ros-<distro>-move-base ```
-
-    ``` $ sudo apt-get install -y ros-<distro>-people-msgs ```
+    ``` $ sudo apt-get install -y ros-foxy-navigation2 ```
+    
+    ``` $ sudo apt-get install -y ros-foxy-nav2-bringup ```
+    
+  - You may need to source Gazebo's setup file if you're having difficulty finding plugins and other resources. 
+  
+    ``` $ source /usr/share/gazebo/setup.sh ```
 
 - clone gazebo_mecanum_plugins package.
 
 ``` bash
-$ git clone https://github.com/qaz9517532846/gazebo_mecanum_plugins.git
+$ git clone -b ros2-foxy https://github.com/qaz9517532846/gazebo_mecanum_plugins.git
 ```
 
-- clone ira_laser_tools package.
+- clone AWS RoboMaker Small Warehouse World package.
 
 ``` bash
-$ git clone https://github.com/iralabdisco/ira_laser_tools.git
-```
-
-- clone navigation_layers package.
-
-``` bash
-$ git clone https://github.com/DLu/navigation_layers.git
+$ git clone -b ros2 https://github.com/aws-robotics/aws-robomaker-small-warehouse-world
 ```
 
 ### Run
 
-------
-
-The zm_robot 3d model xaro file into Rviz.
+- The zm_robot 3d model xaro file into Rviz.
 
 ``` bash
-$ roslaunch zm_robot_description zm_robot_demo.launch
+$ ros2 launch zm_robot_description zm_robot_demo.launch.py
 ```
 
 - The zm_robot 3d model xaro file into Gazebo.
 
 ``` bash
-$ roslaunch zm_robot_gazebo zm_robot_world.launch
+$ ros2 launch zm_robot_gazebo zm_robot_empty_world.launch.py
 ```
 
-![image](https://github.com/qaz9517532846/zm_robot/blob/ros1-main/image/zm_robot.png)
-
+![image](https://github.com/qaz9517532846/zm_robot/blob/ros2/image/zm_robot_empty_world.png)
 
 - This is a zm_robot control using a keyboard.
 
 ``` bash
-$ rosrun zm_robot_teleope_key zm_robot_teleope_key.py
+$ ros2 run zm_robot_teleop zm_robot_teleop_key
 ```
-
-![image](https://github.com/qaz9517532846/zm_robot/blob/ros1-main/image/zm_robot_control.png)
-
 
 - The zm_robot warehouse environment under Gazebo.
 
 ``` bash
-$ roslaunch zm_robot_gazebo zm_robot_warehouse.launch
+$ ros2 launch zm_robot_gazebo zm_robot_aws_warehouse.launch.py
 ```
 
-![image](https://github.com/qaz9517532846/zm_robot/blob/ros1-main/image/zm_robot_warehouse.png)
-
+![image](https://github.com/qaz9517532846/zm_robot/blob/ros2/image/zm_robot_aws_warehouse.png)
 
 - The zm_robot create a map at warehouse.
 
 ``` bash
-$ roslaunch zm_robot_navigation zm_robot_gmapping.launch
+$ ros2 launch zm_robot_navigation zm_robot_cartographer.launch.py
 ```
 
-- The zm_robot can do navigation and aviod obstacles at warehouse.
+![image](https://github.com/qaz9517532846/zm_robot/blob/ros2/image/zm_robot_cartographer.png)
+
+- Cartographer save map command.
 
 ``` bash
-$ roslaunch zm_robot_navigation zm_robot_navigation.launch
+$ ros2 service call /write_state cartographer_ros_msgs/srv/WriteState "{filename : '${HOME}/zm_robot_cartographer_map.pbstream'}"
+$ ros2 run nav2_map_server map_saver_cli -f ~/map
 ```
 
-![image](https://github.com/qaz9517532846/zm_robot/blob/ros1-main/image/zm_robot_navigation.png)
+- The zm_robot can do navigation and aviod obstacles at warehouse using amcl.
 
+``` bash
+$ ros2 launch zm_robot_navigation zm_robot_navigation2.launch.py
+```
+
+- The zm_robot navigation using cartographer localization.
+
+``` bash
+$ ros2 launch zm_robot_navigation zm_robot_cartographer_navigation2.launch.py
+```
+
+![image](https://github.com/qaz9517532846/zm_robot/blob/ros2/image/zm_robot_navigation2.png)
+
+------
 
 - The zm_robot can do navigation and aviod obstacles at warehouse using programing.
 
 ``` bash
-$ roslaunch zm_robot_navigation zm_robot_navigation.launch
-```
-
-``` bash
-$ rosrun zm_robot_programing zm_robot_move
+$ ros2 run zm_robot_programing zm_robot_move
 ```
 
 The zm_robot_move.cpp example.
 
 ``` bash
-#include <zm_robot_programing/zm_robot_move_function.h>
+import rclpy
+from zm_robot_programing.zm_robot_action import zm_robot_cmd
 
-int main(int argc, char** argv) 
-{
-  ros::init(argc, argv, "zm_robot_move"); 
-  ros::NodeHandle n;
+def main(args=None):
+    rclpy.init(args=args)
+    zm_robot = zm_robot_cmd()
+    zm_robot.move_map(1.0, 1.0, 0.0)
+    zm_robot.move_map(1.0, 0.0, 0.0)
+    zm_robot.move_base(-1.0, 0.0, 0.0)
+    exit(0)
 
-  zm_robot my_zm_robot;
 
-  ////// zm_robot programing control start //////
-
-  my_zm_robot.move_map(1.0, 3.0, 1.5708);
-  
-  my_zm_robot.move_base(1.0, 3.0, 1.5708);
-
-  ////// END //////
-
-  return 0;
-}
+if __name__ == '__main__':
+    main()
 ```
 
 ## illustration:
 
 | Function                           | Description                                                |
 | ---                                | ---                                                        | 
-| my_zm_robot.move_map(x, y, theta)  | zm_robot can move to designated location relative to map.  |
-| my_zm_robot.move_base(x, y, theta) | zm_robot can move to designated location relative to base. ||
+| zm_robot.move_map(x, y, theta)  | zm_robot can move to designated location relative to map.     |
+| zm_robot.move_base(x, y, theta) | zm_robot can move to designated location relative to base.    ||
 
 ------
 
@@ -170,8 +166,7 @@ int main(int argc, char** argv)
 | ros1           | zm_robot ros1 version for zm_robot programing simply.                           | July, 2021.   |
 | ros1-main      | zm_robot ros1-main version add safety function           .                      | August, 2021. |
 | ros1-pid       | zm_robot ros1-pid version using PID controller for zm_robot programing simply.  | July, 2021.   |
-| ros2           | zm_robot ros2 versoin under ROS 2 Foxy environment.                             | August, 2021. |
-| ros2-pid       | zm_robot ros2 versoin under ROS 2 Foxy environment using PID controller.        | January, 2022.||
+| ros2           | zm_robot ros2 versoin under ROS 2 Foxy environment.                             | August, 2021. ||
 
 ------
 
@@ -185,26 +180,14 @@ int main(int argc, char** argv)
 
 [4]. Gazebo tutorial - Sensor plugin. http://gazebosim.org/tutorials?tut=ros_gzplugins&cat=connect_ros
 
-[5]. warehouse_simulation_toolkit. https://github.com/wh200720041/warehouse_simulation_toolkit
+[5]. aws-robomaker-small-warehouse-world. https://github.com/aws-robotics/aws-robomaker-small-warehouse-world
 
-[6]. ira_laser_tools. http://wiki.ros.org/ira_laser_tools
+[6]. gazebo_mecanum_plugins. https://github.com/qaz9517532846/gazebo_mecanum_plugins
 
-[7]. dynamic_reconfigure. http://wiki.ros.org/dynamic_reconfigure/Tutorials
-
-[8]. gazebo_mecanum_plugins. https://github.com/qaz9517532846/gazebo_mecanum_plugins
-
-[9]. rto_core. https://github.com/dietriro/rto_core
-
-[10]. twist_mux. http://wiki.ros.org/twist_mux
-
-[11]. ultrasound gazebo plugin. https://medium.com/teamarimac/integrating-sonar-and-ir-sensor-plugin-to-robot-model-in-gazebo-with-ros-656fd9452607
-
-[12]. navigation_layers. https://github.com/DLu/navigation_layers
+[7]. navigation2. https://github.com/ros-planning/navigation2
 
 ------
 
-## License:
-
 This repository is for your reference only. copying, patent application, academic journals are strictly prohibited.
 
-Copyright © 2022 ZM Robotics Software Laboratory.
+Copyright © 2021 ZM Robotics Software Laboratory.
