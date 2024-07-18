@@ -19,7 +19,7 @@ The zm robot is a autonomous mobile robot by 4 mecanum wheel driving under Gazeb
 - Installation ros package.
 
     ``` $ sudo apt-get install ros-<distro>-gazebo-ros-pkgs ros-<distro>-gazebo-ros-control ros-<distro>-ros-controllers ros-<distro>-twist-mux```
-
+```$ sudo apt install ros-noetic-mecanum-gazebo-plugin```
     ``` $ sudo apt-get install -y libgazebo11-dev ```
     
     ``` $ sudo apt-get install -y gazebo11 ```
