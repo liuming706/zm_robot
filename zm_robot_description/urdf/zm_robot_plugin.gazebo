@@ -12,7 +12,7 @@
       <LeftFront>wheel_joint_2</LeftFront>
       <RightFront>wheel_joint_3</RightFront>
       <RightRear>wheel_joint_4</RightRear>
-      <odometryRate>30</odometryRate>      
+      <odometryRate>30</odometryRate>
       <publishWheelTF>false</publishWheelTF>
       <publishOdomTF>false</publishOdomTF>
       <WheelTorque>30</WheelTorque>
@@ -73,7 +73,7 @@
       <joint_name>roller_4_8_joint</joint_name>
       <joint_name>roller_4_9_joint</joint_name>
     </plugin>
-  </gazebo> 
+  </gazebo>
 
   <!-- base_link -->
   <gazebo reference="base_link">
@@ -100,7 +100,7 @@
 
   <!-- sick LiDAR 1 -->
   <gazebo reference="sick_lidar1">
-    <selfCollide>false</selfCollide> 
+    <selfCollide>false</selfCollide>
     <gravity>true</gravity>
     <mu1>30</mu1>
     <mu2>30</mu2>
@@ -149,9 +149,9 @@
       </ray>
       <plugin name="gazebo_ros_sick_front_controller" filename="libgazebo_ros_ray_sensor.so">
         <ros>
-            <!-- <namespace>/tb3</namespace> -->
-            <remapping>~/out:=/sick_s30b/laser/scan0</remapping>
-          </ros>
+          <!-- <namespace>/tb3</namespace> -->
+          <remapping>~/out:=/sick_s30b/laser/scan0</remapping>
+        </ros>
         <output_type>sensor_msgs/LaserScan</output_type>
         <frame_name>sick_lidar0</frame_name>
       </plugin>
@@ -159,7 +159,8 @@
   </gazebo>
 
   <!-- sick LiDAR 1 controller -->
-  <gazebo reference="sick_lidar1">
+  <gazebo
+    reference="sick_lidar1">
     <sensor type="ray" name="sick_LiDAR1_sensor">
       <pose>0 0 0 0 0 0</pose>
       <always_on>false</always_on>
@@ -191,9 +192,9 @@
       </ray>
       <plugin name="gazebo_ros_sick_rear_controller" filename="libgazebo_ros_ray_sensor.so">
         <ros>
-            <!-- <namespace>/tb3</namespace> -->
-            <remapping>~/out:=/sick_s30b/laser/scan1</remapping>
-          </ros>
+          <!-- <namespace>/tb3</namespace> -->
+          <remapping>~/out:=/sick_s30b/laser/scan1</remapping>
+        </ros>
         <output_type>sensor_msgs/LaserScan</output_type>
         <frame_name>sick_lidar1</frame_name>
       </plugin>
@@ -201,28 +202,105 @@
   </gazebo>
 
   <!-- kinect v2 controller -->
-  <gazebo reference="kinect_v2">
-    <sensor name="kinect_v2_camera" type="depth">
-      <always_on>true</always_on>
+  <!-- <gazebo
+    reference="kinect_v2">
+    <sensor type="depth" name="upper_openni_camera">
+      <always_on>1</always_on>
       <visualize>true</visualize>
-      <update_rate>30</update_rate>
-      <camera name="kinect_v2_camera">
-        <horizontal_fov>1.047198</horizontal_fov>
+      <camera>
+        <horizontal_fov>2.8</horizontal_fov>
         <image>
-          <width>960</width>
-          <height>540</height>
-          <format>R8G8B8</format>
+          <width>640</width>
+          <height>480</height>
+          <format>B8G8R8</format>
         </image>
+        <depth_camera>
+        </depth_camera>
         <clip>
-          <near>0.05</near>
-          <far>3</far>
+          <near>0.01</near>
+          <far>100</far>
         </clip>
       </camera>
-      <plugin name="kinect_v2_driver" filename="libgazebo_ros_camera.so">
-         <camera_name>kinect_v2</camera_name>
-         <frame_name>kinect_v2</frame_name>
-         <triggered>false</triggered>
-         <hack_baseline>0.07</hack_baseline>
+      <plugin name="onepni_camera_controller" filename="libgazebo_ros_camera.so">
+        <alwaysOn>true</alwaysOn>
+        <updateRate>10.0</updateRate>
+        <cameraName>upper/camera</cameraName>
+        <frameName>kinect_v2_cloud_link</frameName>
+        <imageTopicName>upper/rgb/image_raw</imageTopicName>
+        <depthImageTopicName>upper/depth/image_raw</depthImageTopicName>
+        <pointCloudTopicName>upper/depth/points</pointCloudTopicName>
+        <cameraInfoTopicName>upper/rgb/camera_info</cameraInfoTopicName>
+        <depthImageCameraInfoTopicName>upper/depth/camera_info</depthImageCameraInfoTopicName>
+        <pointCloudCutoff>0.4</pointCloudCutoff>
+        <hackBaseline>0.07</hackBaseline>
+        <distortionK1>0.0</distortionK1>
+        <distortionK2>0.0</distortionK2>
+        <distortionK3>0.0</distortionK3>
+        <distortionT1>0.0</distortionT1>
+        <distortionT2>0.0</distortionT2>
+        <CxPrime>0.0</CxPrime>
+        <Cx>0.0</Cx>
+        <Cy>0.0</Cy>
+        <focalLength>0.0</focalLength>
+      </plugin>
+    </sensor>
+  </gazebo> -->
+
+  <gazebo reference="kinect_v2">
+    <sensor type="depth" name="my_sensor">
+      <!-- Set always_on only sensor, not on plugin -->
+      <always_on>1</always_on>
+
+      <!-- Set update_rate only sensor, not on plugin -->
+      <update_rate>1</update_rate>
+
+      <camera name="my_camera">
+        <image>
+          <width>640</width>
+          <height>480</height>
+        </image>
+        <clip>
+          <near>0.15</near>
+          <far>30</far>
+        </clip>
+        <distortion>
+          <k1>0.0</k1>
+          <k2>0.0</k2>
+          <k3>0.0</k3>
+          <p1>0.0</p1>
+          <p2>0.0</p2>
+          <center>0.0 0.0</center>
+        </distortion>
+      </camera>
+
+      <plugin name="plugin_name_whatever" filename="libgazebo_ros_camera.so">
+        <!-- Change namespace, camera name and topics so -
+             * Raw images are published to: /custom_ns/camera/custom_image
+             * Depth images are published to: /custom_ns/camera/custom_image_depth
+             * Raw image camera info is published to: /custom_ns/camera/custom_info_raw
+             * Depth image camera info is published to: /custom_ns/camera/custom_info_depth
+             * Point cloud is published to: /custom_ns/camera/custom_points
+        -->
+        <ros>
+          <namespace>custom_ns</namespace>
+          <remapping>camera/image_raw:=camera/custom_image</remapping>
+          <remapping>camera/image_depth:=camera/custom_image_depth</remapping>
+          <remapping>camera/camera_info:=camera/custom_info_raw</remapping>
+          <remapping>camera/camera_info_depth:=camera/custom_info_depth</remapping>
+          <remapping>camera/points:=camera/custom_points</remapping>
+        </ros>
+
+        <!-- Set camera name. If empty, defaults to sensor name (i.e. "sensor_name") -->
+        <camera_name>camera</camera_name>
+
+        <!-- Set TF frame name. If empty, defaults to link name (i.e. "link_name") -->
+        <frame_name>kinect_v2_cloud_link</frame_name>
+
+        <hack_baseline>0.07</hack_baseline>
+
+        <!-- No need to repeat distortion parameters or to set autoDistortion -->
+
+        <min_depth>0.001</min_depth>
       </plugin>
     </sensor>
   </gazebo>
@@ -233,9 +311,9 @@
       <always_on>true</always_on>
       <update_rate>30</update_rate>
       <imu>
-          <angular_velocity>
+        <angular_velocity>
           <x>
-              <noise type="gaussian">
+            <noise type="gaussian">
               <mean>0.0</mean>
               <stddev>2e-4</stddev>
             </noise>
@@ -266,8 +344,8 @@
               <stddev>1.7e-2</stddev>
             </noise>
           </y>
-            <z>
-              <noise type="gaussian">
+          <z>
+            <noise type="gaussian">
               <mean>0.0</mean>
               <stddev>1.7e-2</stddev>
             </noise>
@@ -283,179 +361,183 @@
   </gazebo>
 
   <!-- Ultrasound sensor controller -->
-  <gazebo reference="ultrasound_1">
+  <gazebo
+    reference="ultrasound_1">
     <sensor name="ultrasound_1" type="ray">
-        <always_on>true</always_on>
-        <visualize>false</visualize>
-        <pose>0.0 0 0.0 0 0 0</pose>
-        <update_rate>30</update_rate>
-        <ray>
-            <scan>
-                <horizontal>
-                    <samples>10</samples>
-                    <resolution>1.0</resolution>
-                    <min_angle>-0.14835</min_angle>
-                    <max_angle>0.14835</max_angle>
-                </horizontal>
-                <vertical>
-                    <samples>10</samples>
-                    <resolution>1.0</resolution>
-                    <min_angle>-0.14835</min_angle>
-                    <max_angle>0.14835</max_angle>
-                </vertical>
-            </scan>
-            <range>
-                <min>0.03</min>
-                <max>0.5</max>
-                <resolution>0.01</resolution>
-            </range>
-            <noise>
-                <type>gaussian</type>
-                <mean>0.0</mean>
-                <stddev>0.01</stddev>
-            </noise>
-        </ray>
-        <plugin name="bytes_ultrasound1" filename="libgazebo_ros_ray_sensor.so">
-            <ros>
-                <remapping>~/out:=ultrasound_1</remapping>
-            </ros>
-            <output_type>sensor_msgs/Range</output_type>
-            <radiation_type>ultrasound</radiation_type>
-            <frame_name>ultrasound_1</frame_name>
-            <radiation_type>ultrasound</radiation_type>
-        </plugin>
+      <always_on>true</always_on>
+      <visualize>false</visualize>
+      <pose>0.0 0 0.0 0 0 0</pose>
+      <update_rate>30</update_rate>
+      <ray>
+        <scan>
+          <horizontal>
+            <samples>10</samples>
+            <resolution>1.0</resolution>
+            <min_angle>-0.14835</min_angle>
+            <max_angle>0.14835</max_angle>
+          </horizontal>
+          <vertical>
+            <samples>10</samples>
+            <resolution>1.0</resolution>
+            <min_angle>-0.14835</min_angle>
+            <max_angle>0.14835</max_angle>
+          </vertical>
+        </scan>
+        <range>
+          <min>0.03</min>
+          <max>0.5</max>
+          <resolution>0.01</resolution>
+        </range>
+        <noise>
+          <type>gaussian</type>
+          <mean>0.0</mean>
+          <stddev>0.01</stddev>
+        </noise>
+      </ray>
+      <plugin name="bytes_ultrasound1" filename="libgazebo_ros_ray_sensor.so">
+        <ros>
+          <remapping>~/out:=ultrasound_1</remapping>
+        </ros>
+        <output_type>sensor_msgs/Range</output_type>
+        <radiation_type>ultrasound</radiation_type>
+        <frame_name>ultrasound_1</frame_name>
+        <radiation_type>ultrasound</radiation_type>
+      </plugin>
     </sensor>
   </gazebo>
 
-  <gazebo reference="ultrasound_2">
+  <gazebo
+    reference="ultrasound_2">
     <sensor name="ultrasound_2" type="ray">
-        <always_on>true</always_on>
-        <visualize>false</visualize>
-        <pose>0.0 0 0.0 0 0 0</pose>
-        <update_rate>30</update_rate>
-        <ray>
-            <scan>
-                <horizontal>
-                    <samples>10</samples>
-                    <resolution>1.0</resolution>
-                    <min_angle>-0.14835</min_angle>
-                    <max_angle>0.14835</max_angle>
-                </horizontal>
-                <vertical>
-                    <samples>10</samples>
-                    <resolution>1.0</resolution>
-                    <min_angle>-0.14835</min_angle>
-                    <max_angle>0.14835</max_angle>
-                </vertical>
-            </scan>
-            <range>
-                <min>0.03</min>
-                <max>0.5</max>
-                <resolution>0.01</resolution>
-            </range>
-            <noise>
-                <type>gaussian</type>
-                <mean>0.0</mean>
-                <stddev>0.01</stddev>
-            </noise>
-        </ray>
-        <plugin name="bytes_ultrasound2" filename="libgazebo_ros_ray_sensor.so">
-            <ros>
-                <remapping>~/out:=ultrasound_2</remapping>
-            </ros>
-            <output_type>sensor_msgs/Range</output_type>
-            <radiation_type>ultrasound</radiation_type>
-            <frame_name>ultrasound_2</frame_name>
-            <radiation_type>ultrasound</radiation_type>
-        </plugin>
+      <always_on>true</always_on>
+      <visualize>false</visualize>
+      <pose>0.0 0 0.0 0 0 0</pose>
+      <update_rate>30</update_rate>
+      <ray>
+        <scan>
+          <horizontal>
+            <samples>10</samples>
+            <resolution>1.0</resolution>
+            <min_angle>-0.14835</min_angle>
+            <max_angle>0.14835</max_angle>
+          </horizontal>
+          <vertical>
+            <samples>10</samples>
+            <resolution>1.0</resolution>
+            <min_angle>-0.14835</min_angle>
+            <max_angle>0.14835</max_angle>
+          </vertical>
+        </scan>
+        <range>
+          <min>0.03</min>
+          <max>0.5</max>
+          <resolution>0.01</resolution>
+        </range>
+        <noise>
+          <type>gaussian</type>
+          <mean>0.0</mean>
+          <stddev>0.01</stddev>
+        </noise>
+      </ray>
+      <plugin name="bytes_ultrasound2" filename="libgazebo_ros_ray_sensor.so">
+        <ros>
+          <remapping>~/out:=ultrasound_2</remapping>
+        </ros>
+        <output_type>sensor_msgs/Range</output_type>
+        <radiation_type>ultrasound</radiation_type>
+        <frame_name>ultrasound_2</frame_name>
+        <radiation_type>ultrasound</radiation_type>
+      </plugin>
     </sensor>
   </gazebo>
 
-  <gazebo reference="ultrasound_3">
+  <gazebo
+    reference="ultrasound_3">
     <sensor name="ultrasound_3" type="ray">
-        <always_on>true</always_on>
-        <visualize>false</visualize>
-        <pose>0.0 0 0.0 0 0 0</pose>
-        <update_rate>30</update_rate>
-        <ray>
-            <scan>
-                <horizontal>
-                    <samples>10</samples>
-                    <resolution>1.0</resolution>
-                    <min_angle>-0.14835</min_angle>
-                    <max_angle>0.14835</max_angle>
-                </horizontal>
-                <vertical>
-                    <samples>10</samples>
-                    <resolution>1.0</resolution>
-                    <min_angle>-0.14835</min_angle>
-                    <max_angle>0.14835</max_angle>
-                </vertical>
-            </scan>
-            <range>
-                <min>0.03</min>
-                <max>0.5</max>
-                <resolution>0.01</resolution>
-            </range>
-            <noise>
-                <type>gaussian</type>
-                <mean>0.0</mean>
-                <stddev>0.01</stddev>
-            </noise>
-        </ray>
-        <plugin name="bytes_ultrasound3" filename="libgazebo_ros_ray_sensor.so">
-            <ros>
-                <remapping>~/out:=ultrasound_3</remapping>
-            </ros>
-            <output_type>sensor_msgs/Range</output_type>
-            <radiation_type>ultrasound</radiation_type>
-            <frame_name>ultrasound_3</frame_name>
-            <radiation_type>ultrasound</radiation_type>
-        </plugin>
+      <always_on>true</always_on>
+      <visualize>false</visualize>
+      <pose>0.0 0 0.0 0 0 0</pose>
+      <update_rate>30</update_rate>
+      <ray>
+        <scan>
+          <horizontal>
+            <samples>10</samples>
+            <resolution>1.0</resolution>
+            <min_angle>-0.14835</min_angle>
+            <max_angle>0.14835</max_angle>
+          </horizontal>
+          <vertical>
+            <samples>10</samples>
+            <resolution>1.0</resolution>
+            <min_angle>-0.14835</min_angle>
+            <max_angle>0.14835</max_angle>
+          </vertical>
+        </scan>
+        <range>
+          <min>0.03</min>
+          <max>0.5</max>
+          <resolution>0.01</resolution>
+        </range>
+        <noise>
+          <type>gaussian</type>
+          <mean>0.0</mean>
+          <stddev>0.01</stddev>
+        </noise>
+      </ray>
+      <plugin name="bytes_ultrasound3" filename="libgazebo_ros_ray_sensor.so">
+        <ros>
+          <remapping>~/out:=ultrasound_3</remapping>
+        </ros>
+        <output_type>sensor_msgs/Range</output_type>
+        <radiation_type>ultrasound</radiation_type>
+        <frame_name>ultrasound_3</frame_name>
+        <radiation_type>ultrasound</radiation_type>
+      </plugin>
     </sensor>
   </gazebo>
 
-  <gazebo reference="ultrasound_4">
+  <gazebo
+    reference="ultrasound_4">
     <sensor name="ultrasound_4" type="ray">
-        <always_on>true</always_on>
-        <visualize>false</visualize>
-        <pose>0.0 0 0.0 0 0 0</pose>
-        <update_rate>30</update_rate>
-        <ray>
-            <scan>
-                <horizontal>
-                    <samples>10</samples>
-                    <resolution>1.0</resolution>
-                    <min_angle>-0.14835</min_angle>
-                    <max_angle>0.14835</max_angle>
-                </horizontal>
-                <vertical>
-                    <samples>10</samples>
-                    <resolution>1.0</resolution>
-                    <min_angle>-0.14835</min_angle>
-                    <max_angle>0.14835</max_angle>
-                </vertical>
-            </scan>
-            <range>
-                <min>0.03</min>
-                <max>0.5</max>
-                <resolution>0.01</resolution>
-            </range>
-            <noise>
-                <type>gaussian</type>
-                <mean>0.0</mean>
-                <stddev>0.01</stddev>
-            </noise>
-        </ray>
-        <plugin name="bytes_ultrasound4" filename="libgazebo_ros_ray_sensor.so">
-            <ros>
-                <remapping>~/out:=ultrasound_4</remapping>
-            </ros>
-            <output_type>sensor_msgs/Range</output_type>
-            <radiation_type>ultrasound</radiation_type>
-            <frame_name>ultrasound_4</frame_name>
-            <radiation_type>ultrasound</radiation_type>
-        </plugin>
+      <always_on>true</always_on>
+      <visualize>false</visualize>
+      <pose>0.0 0 0.0 0 0 0</pose>
+      <update_rate>30</update_rate>
+      <ray>
+        <scan>
+          <horizontal>
+            <samples>10</samples>
+            <resolution>1.0</resolution>
+            <min_angle>-0.14835</min_angle>
+            <max_angle>0.14835</max_angle>
+          </horizontal>
+          <vertical>
+            <samples>10</samples>
+            <resolution>1.0</resolution>
+            <min_angle>-0.14835</min_angle>
+            <max_angle>0.14835</max_angle>
+          </vertical>
+        </scan>
+        <range>
+          <min>0.03</min>
+          <max>0.5</max>
+          <resolution>0.01</resolution>
+        </range>
+        <noise>
+          <type>gaussian</type>
+          <mean>0.0</mean>
+          <stddev>0.01</stddev>
+        </noise>
+      </ray>
+      <plugin name="bytes_ultrasound4" filename="libgazebo_ros_ray_sensor.so">
+        <ros>
+          <remapping>~/out:=ultrasound_4</remapping>
+        </ros>
+        <output_type>sensor_msgs/Range</output_type>
+        <radiation_type>ultrasound</radiation_type>
+        <frame_name>ultrasound_4</frame_name>
+        <radiation_type>ultrasound</radiation_type>
+      </plugin>
     </sensor>
   </gazebo>
 </robot>

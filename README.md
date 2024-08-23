@@ -6,7 +6,7 @@ The zm robot is a autonomous mobile robot by 4 mecanum wheel driving under Gazeb
 
 ## Built with
 
-- ROS Foxy under Ubuntu 20.04 LTS
+- ROS humble under Ubuntu 20.04 LTS
 
 ------
 
@@ -16,17 +16,17 @@ The zm robot is a autonomous mobile robot by 4 mecanum wheel driving under Gazeb
 
 - Installation ros package.
 
-    ``` $ sudo apt-get install ros-foxy-gazebo-ros-pkgs ros-foxy-gazebo-ros ros-foxy-gazebo-dev ros-foxy-xacro```
+    ``` $ sudo apt-get install ros-humble-gazebo-ros-pkgs ros-humble-gazebo-ros ros-humble-gazebo-dev ros-humble-xacro```
 
     ``` $ sudo apt-get install -y libgazebo11-dev ```
     
     ``` $ sudo apt-get install -y gazebo11 ```
 
-    ``` $ sudo apt-get install -y ros-foxy-cartographer-ros ```
+    ``` $ sudo apt-get install -y ros-humble-cartographer-ros ```
   
-    ``` $ sudo apt-get install -y ros-foxy-navigation2 ```
+    ``` $ sudo apt-get install -y ros-humble-navigation2 ```
     
-    ``` $ sudo apt-get install -y ros-foxy-nav2-bringup ```
+    ``` $ sudo apt-get install -y ros-humble-nav2-bringup ```
     
   - You may need to source Gazebo's setup file if you're having difficulty finding plugins and other resources. 
   
@@ -35,7 +35,7 @@ The zm robot is a autonomous mobile robot by 4 mecanum wheel driving under Gazeb
 - clone gazebo_mecanum_plugins package.
 
 ``` bash
-$ git clone -b ros2-foxy https://github.com/qaz9517532846/gazebo_mecanum_plugins.git
+$ git clone -b ros2-humble https://github.com/qaz9517532846/gazebo_mecanum_plugins.git
 ```
 
 - clone AWS RoboMaker Small Warehouse World package.
@@ -166,7 +166,7 @@ if __name__ == '__main__':
 | ros1           | zm_robot ros1 version for zm_robot programing simply.                           | July, 2021.   |
 | ros1-main      | zm_robot ros1-main version add safety function           .                      | August, 2021. |
 | ros1-pid       | zm_robot ros1-pid version using PID controller for zm_robot programing simply.  | July, 2021.   |
-| ros2           | zm_robot ros2 versoin under ROS 2 Foxy environment.                             | August, 2021. ||
+| ros2           | zm_robot ros2 versoin under ROS 2 humble environment.                             | August, 2021. ||
 
 ------
 
